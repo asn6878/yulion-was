@@ -12,15 +12,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.example.yulion.global.auth.AuthConstants;
 import org.springdoc.core.customizers.OperationCustomizer;
-import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.util.ObjectUtils;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -32,14 +28,13 @@ import static org.springframework.security.config.Elements.JWT;
                 @Server(url = "http://localhost:8080", description = "Local Server"),
         },
         tags = {
-                @Tag(name = "Club", description = "모임"),
+                @Tag(name = "Auth", description = "인증"),
         }
 )
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Configuration
 public class SwaggerConfig {
 
-    private final BuildProperties buildProperties;
     private final Environment environment;
 
 
@@ -68,11 +63,9 @@ public class SwaggerConfig {
     private Info info() {
         final String activeProfile = getActiveProfile();
         return new Info()
-                .title("사부작 API (" + activeProfile + ")")
-                .description("API 명세 문서"
-                        + "<br> 빌드 일자: " + getFormattedTime(buildProperties.getTime())
-                        + "<br> 실행 일자: " + getFormattedTime(Instant.now()))
-                .version(buildProperties.getVersion());
+                .title("YuLion API (" + activeProfile + ")")
+                .description("API 명세 문서")
+                .version("1.0.0");
     }
 
 
@@ -94,13 +87,6 @@ public class SwaggerConfig {
             return environment.getDefaultProfiles()[0];
         }
         return environment.getActiveProfiles()[0];
-    }
-
-    private String getFormattedTime(Instant time) {
-        final DateTimeFormatter formatter = DateTimeFormatter
-                .ofPattern("yy-MM-dd E HH:mm:ss zzz")
-                .withZone(ZoneId.systemDefault());
-        return formatter.format(time);
     }
 
 }

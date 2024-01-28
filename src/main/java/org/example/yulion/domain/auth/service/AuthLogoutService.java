@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.yulion.global.auth.refreshtoken.RefreshToken;
 import org.example.yulion.global.auth.refreshtoken.RefreshTokenService;
+import org.example.yulion.global.exception.AuthErrorException;
 import org.example.yulion.global.resolver.accesstoken.AccessToken;
-import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -32,7 +32,7 @@ public class AuthLogoutService {
         if (!currentSubject.equals(tokenSubject)) {
             final var errorMessage = String.format("비정상적인 로그아웃 시도! 현재 멤버 ID: %s, But tried ID: %s", currentSubject, tokenSubject);
             log.warn(errorMessage);
-            throw new RequestRejectedException(errorMessage);
+            throw new AuthErrorException(errorMessage);
         }
     }
 
