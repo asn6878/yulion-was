@@ -37,11 +37,20 @@ public class Post extends BaseTimeEntity {
     private String members;
 
     @Builder
-    protected Post (String title, String content, Long viewCnt, String members){
+    protected Post (String title, String content, Long viewCnt, String members, User writer, Category category, Part part){
         this.title = title;
         this.content = content;
         this.viewCnt = viewCnt;
         this.members = members;
+        this.writer = writer;
+        this.category = category;
+        this.part = part;
     }
+
+    // 연관관계 매핑 메소드
+//    public void setWriter(User user){
+//        this.writer = user;
+//        user.getPosts().add(this);
+//    }
 
 }

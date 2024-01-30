@@ -3,8 +3,11 @@ package org.example.yulion.domain.user.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.yulion.domain.common.BaseTimeEntity;
+import org.example.yulion.domain.post.domain.Post;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -34,6 +37,9 @@ public class User extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Post> posts = new ArrayList<>();
 
     @Builder
     protected User(String password, String phoneNumber, String nickname, String email, UserRole role, String gender, LocalDate birth) {
