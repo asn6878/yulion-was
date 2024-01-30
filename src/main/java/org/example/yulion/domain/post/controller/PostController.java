@@ -41,7 +41,20 @@ public class PostController {
     }
 
     // 2. 게시글 조회 (상세 조회)
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDetailResponse> getPost(@PathVariable Long id) {
+        PostDetailResponse response = postService.getPost(id);
 
+        return ResponseEntity.ok(response);
+    }
 
+    // 3. 게시글 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<PostDetailResponse> modifyPost(@PathVariable Long id, @RequestBody PostCreateRequest request) {
+        PostDetailResponse response = postService.modifyPost(id, request);
 
+        return ResponseEntity.ok(response);
+    }
+
+    // 4. 게시글 삭제
 }

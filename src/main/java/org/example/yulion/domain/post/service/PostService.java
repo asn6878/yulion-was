@@ -52,4 +52,25 @@ public class PostService {
                 .build();
     }
 
+    public PostDetailResponse getPost(Long id) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
+
+        return PostDetailResponse.from(post);
+    }
+
+    public PostDetailResponse modifyPost(Long id, PostCreateRequest request) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
+        Category category = categoryRepository.findByName(request.getCategory())
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
+        Part part = partRepository.findByName(request.getPart())
+                .orElseThrow(() -> new IllegalArgumentException("해당 파트 없음"));
+
+        post.modifyPost(request.getTitle(), request.getContent(), request.getMembers(), category, part);
+        final Post savedPost = postRepository.save(post);
+
+        return PostDetailResponse.from(savedPost);
+    }
+
 }
