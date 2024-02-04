@@ -57,4 +57,14 @@ public class PostController {
     }
 
     // 4. 게시글 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable Long id) {
+        PostDetailResponse response = postService.deletePost(id);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 5. 게시글 목록조회
+    @GetMapping("")
+
 }
