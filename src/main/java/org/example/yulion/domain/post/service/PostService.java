@@ -9,10 +9,15 @@ import org.example.yulion.domain.part.domain.Part;
 import org.example.yulion.domain.part.repository.PartRepository;
 import org.example.yulion.domain.post.domain.Post;
 import org.example.yulion.domain.post.dto.request.PostCreateRequest;
+import org.example.yulion.domain.post.dto.response.PostCommonListResponse;
 import org.example.yulion.domain.post.dto.response.PostDetailResponse;
 import org.example.yulion.domain.post.repository.PostRepository;
 import org.example.yulion.domain.user.domain.User;
 import org.example.yulion.domain.user.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -79,5 +84,12 @@ public class PostService {
         postRepository.delete(post);
 
         return PostDetailResponse.from(post);
+    }
+
+    public PostCommonListResponse getCommonList(Pageable pageable){
+
+        Page<Post> page = postRepository.findAllCommon(pageable);
+
+        // return PostCommonLinstResponse.from(page);
     }
 }

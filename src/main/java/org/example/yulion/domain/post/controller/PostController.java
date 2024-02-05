@@ -2,8 +2,12 @@ package org.example.yulion.domain.post.controller;
 
 import org.example.yulion.domain.post.domain.Post;
 import org.example.yulion.domain.post.dto.request.PostCreateRequest;
+import org.example.yulion.domain.post.dto.response.PostCommonListResponse;
 import org.example.yulion.domain.post.dto.response.PostDetailResponse;
 import org.example.yulion.domain.post.service.PostService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,6 +69,13 @@ public class PostController {
     }
 
     // 5. 게시글 목록조회
-    @GetMapping("")
+    @GetMapping("common-list/") // page => 페이지 번호, criteria => 정렬 기준 (기본은 작성일자)
+    public ResponseEntity<PostCommonListResponse> getCommonList(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                                                @RequestParam(required = false, defaultValue = "createAt", value = "criteria") String criteria,
+                                                                @RequestParam(required = false, defaultValue = "10", value = "size") int size) {
+        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(criteria).descending());
+        PostCommonListResponse response = postService.getCommonList(pageable);
 
+        return ResponseEntity.ok(response);
+    }
 }
