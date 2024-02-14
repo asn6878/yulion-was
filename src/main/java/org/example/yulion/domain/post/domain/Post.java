@@ -52,7 +52,6 @@ public class Post extends BaseTimeEntity {
 //        this.writer = user;
 //        user.getPosts().add(this);
 //    }
-
     public void modifyPost(String title, String content, String members, Category category, Part part){
         this.title = title;
         this.content = content;

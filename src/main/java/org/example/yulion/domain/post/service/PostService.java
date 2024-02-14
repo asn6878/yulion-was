@@ -1,8 +1,8 @@
 package org.example.yulion.domain.post.service;
 
-import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.yulion.domain.category.domain.Category;
 import org.example.yulion.domain.category.repository.CategoryRepository;
 import org.example.yulion.domain.part.domain.Part;
@@ -10,18 +10,20 @@ import org.example.yulion.domain.part.repository.PartRepository;
 import org.example.yulion.domain.post.domain.Post;
 import org.example.yulion.domain.post.dto.request.PostCreateRequest;
 import org.example.yulion.domain.post.dto.response.PostCommonListResponse;
+import org.example.yulion.domain.post.dto.response.PostCommonSummaryResponse;
 import org.example.yulion.domain.post.dto.response.PostDetailResponse;
 import org.example.yulion.domain.post.repository.PostRepository;
 import org.example.yulion.domain.user.domain.User;
 import org.example.yulion.domain.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Transactional
 @Service
 @AllArgsConstructor
@@ -33,6 +35,7 @@ public class PostService {
 
     // 1. Controller => createPost 메서드에 매핑되는 Service 로직
     public PostDetailResponse addPost(PostCreateRequest request) {
+        // 인증 구현전 테스팅용 유저 정보 가져오기
         User user = userRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저 없음"));
         Post post = createPost(request, user);
@@ -86,10 +89,15 @@ public class PostService {
         return PostDetailResponse.from(post);
     }
 
-    public PostCommonListResponse getCommonList(Pageable pageable){
+    public PostCommonListResponse getNoticeList(Pageable pageable){
+        Category category = categoryRepository.findByName("Notice")
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
+        Page<Post> posts = postRepository.findAllByCategoryOrderByCreateAt(category, pageable);
 
-        Page<Post> page = postRepository.findAllCommon(pageable);
+        List<PostCommonSummaryResponse> postResponses = posts.getContent().stream()
+                .map(PostCommonSummaryResponse::from)
+                .collect(Collectors.toList());
 
-        // return PostCommonLinstResponse.from(page);
+        return PostCommonListResponse.from(postResponses, posts.getNumber(), posts.getTotalPages());
     }
 }

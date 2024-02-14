@@ -3,6 +3,7 @@ package org.example.yulion.domain.post.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 public class PostCreateRequest {
@@ -16,6 +17,7 @@ public class PostCreateRequest {
 
     @Builder
     public PostCreateRequest(String title, String content, String members, String category, String part) {
+
         this.title = title;
         this.content = content;
         this.members = members;
