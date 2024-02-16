@@ -71,7 +71,7 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    // 5-1. 게시글 목록조회 (공지사항)
+    // 5-1-1. 게시글 목록조회 (공지사항)
     @GetMapping("/notice") // page => 페이지 번호, criteria => 정렬 기준 (기본은 작성일자)
     public ResponseEntity<?> getNoticeList(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                                                    @RequestParam(required = false, defaultValue = "createAt", value = "criteria") String criteria,
@@ -81,4 +81,17 @@ public class PostController {
 
         return ResponseEntity.ok(response);
     }
+
+    // 5-1-2. 게시글 목록조회 (커뮤니티)
+    @GetMapping("/community")
+    public ResponseEntity<?> getCommunityList(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                                                   @RequestParam(required = false, defaultValue = "createAt", value = "criteria") String criteria,
+                                                                   @RequestParam(required = false, defaultValue = "10", value = "size") int size) {
+        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(criteria).descending());
+        PostCommonListResponse response = postService.getCommunityList(pageable);
+
+        return ResponseEntity.ok(response);
+    }
+
+
 }

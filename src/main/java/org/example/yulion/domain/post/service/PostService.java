@@ -94,7 +94,19 @@ public class PostService {
     }
 
     public PostCommonListResponse getNoticeList(Pageable pageable){
-        Category category = categoryRepository.findByName("Notice")
+        Category category = categoryRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
+        Page<Post> posts = postRepository.findAllByCategoryOrderByCreateAt(category, pageable);
+
+        List<PostCommonSummaryResponse> postResponses = posts.getContent().stream()
+                .map(PostCommonSummaryResponse::from)
+                .collect(Collectors.toList());
+
+        return PostCommonListResponse.from(postResponses, posts.getNumber(), posts.getTotalPages());
+    }
+
+    public PostCommonListResponse getCommunityList(Pageable pageable){
+        Category category = categoryRepository.findById(2L)
                 .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
         Page<Post> posts = postRepository.findAllByCategoryOrderByCreateAt(category, pageable);
 
