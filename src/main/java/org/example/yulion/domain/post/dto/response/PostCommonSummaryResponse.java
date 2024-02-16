@@ -9,7 +9,7 @@ public record PostCommonSummaryResponse(
     Long id,
     String part,
     String title,
-    User writer,
+    String writer,
     LocalDateTime createAt,
     Long viewCnt) {
 
@@ -18,7 +18,7 @@ public record PostCommonSummaryResponse(
             post.getId(),
             post.getPart().getName(),
             post.getTitle(),
-            post.getWriter(),
+            post.getWriter().getNickname(),
             post.getCreateAt(),
             post.getViewCnt()
         );

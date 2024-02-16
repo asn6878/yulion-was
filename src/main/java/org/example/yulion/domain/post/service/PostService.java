@@ -39,6 +39,7 @@ public class PostService {
         // 인증 구현전 테스팅용 유저 정보 가져오기
         User user = userRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저 없음"));
+
         Post post = createPost(request, user);
         // log.info(post.getId().toString());
         Post savedPost = postRepository.save(post);
@@ -49,18 +50,18 @@ public class PostService {
     }
 
     public Post createPost(final PostCreateRequest request, final User user) {
-        Category category = categoryRepository.findByName(request.getCategory())
+        Category category = categoryRepository.findById(request.getCategory())
                 .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
-        Part part = partRepository.findByName(request.getPart())
+        Part part = partRepository.findById(request.getPart())
                 .orElseThrow(() -> new IllegalArgumentException("해당 파트 없음"));
 
         return Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
                 .members(request.getMembers())
+                .part(part)
                 .category(category)
                 .writer(user)
-                .part(part)
                 .build();
     }
 
@@ -74,9 +75,9 @@ public class PostService {
     public PostDetailResponse modifyPost(Long id, PostCreateRequest request) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
-        Category category = categoryRepository.findByName(request.getCategory())
+        Category category = categoryRepository.findById(request.getCategory())
                 .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
-        Part part = partRepository.findByName(request.getPart())
+        Part part = partRepository.findById(request.getPart())
                 .orElseThrow(() -> new IllegalArgumentException("해당 파트 없음"));
 
         post.modifyPost(request.getTitle(), request.getContent(), request.getMembers(), category, part);
@@ -94,7 +95,19 @@ public class PostService {
     }
 
     public PostCommonListResponse getNoticeList(Pageable pageable){
-        Category category = categoryRepository.findByName("Notice")
+        Category category = categoryRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
+        Page<Post> posts = postRepository.findAllByCategoryOrderByCreateAt(category, pageable);
+
+        List<PostCommonSummaryResponse> postResponses = posts.getContent().stream()
+                .map(PostCommonSummaryResponse::from)
+                .collect(Collectors.toList());
+
+        return PostCommonListResponse.from(postResponses, posts.getNumber(), posts.getTotalPages());
+    }
+
+    public PostCommonListResponse getCommunityList(Pageable pageable){
+        Category category = categoryRepository.findById(2L)
                 .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
         Page<Post> posts = postRepository.findAllByCategoryOrderByCreateAt(category, pageable);
 
