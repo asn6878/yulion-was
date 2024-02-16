@@ -42,7 +42,6 @@ public class PostController {
     // 1. 게시글 생성
     @PostMapping("")
     public ResponseEntity<PostDetailResponse> createPost(@RequestBody PostCreateRequest request) {
-        log.info(request.toString());
         PostDetailResponse response = postService.addPost(request);
 
         return ResponseEntity.ok(response);

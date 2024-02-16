@@ -8,9 +8,8 @@ import org.example.yulion.domain.part.domain.Part;
 import org.example.yulion.domain.user.domain.User;
 
 @Entity
-@Table
+@Table(name = "post")
 @Getter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseTimeEntity {
 
@@ -19,6 +18,7 @@ public class Post extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn (name = "user_id")
     private User writer;
 
     @OneToOne(fetch = FetchType.LAZY)

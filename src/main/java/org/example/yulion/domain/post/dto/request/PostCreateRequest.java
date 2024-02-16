@@ -3,8 +3,10 @@ package org.example.yulion.domain.post.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@NoArgsConstructor
 @Getter
 public class PostCreateRequest {
     @NotBlank

@@ -2,6 +2,7 @@ package org.example.yulion.domain.post.service;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 import org.example.yulion.domain.category.domain.Category;
 import org.example.yulion.domain.category.repository.CategoryRepository;
@@ -39,7 +40,10 @@ public class PostService {
         User user = userRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저 없음"));
         Post post = createPost(request, user);
+        // log.info(post.getId().toString());
         Post savedPost = postRepository.save(post);
+
+        log.info("savedPost : {}", savedPost);
 
         return PostDetailResponse.from(savedPost);
     }
