@@ -42,7 +42,6 @@ public class PostController {
     // 1. 게시글 생성
     @PostMapping("")
     public ResponseEntity<PostDetailResponse> createPost(@RequestBody PostCreateRequest request) {
-        log.info(request.toString());
         PostDetailResponse response = postService.addPost(request);
 
         return ResponseEntity.ok(response);
@@ -72,7 +71,7 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    // 5. 게시글 목록조회
+    // 5-1. 게시글 목록조회 (공지사항)
     @GetMapping("/notice") // page => 페이지 번호, criteria => 정렬 기준 (기본은 작성일자)
     public ResponseEntity<?> getNoticeList(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
                                                                    @RequestParam(required = false, defaultValue = "createAt", value = "criteria") String criteria,
