@@ -2,6 +2,7 @@ package org.example.yulion.domain.post.service;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 import org.example.yulion.domain.category.domain.Category;
 import org.example.yulion.domain.category.repository.CategoryRepository;
@@ -38,25 +39,28 @@ public class PostService {
         // 인증 구현전 테스팅용 유저 정보 가져오기
         User user = userRepository.findById(1L)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저 없음"));
+
         Post post = createPost(request, user);
         Post savedPost = postRepository.save(post);
+
+        log.info("savedPost : {}", savedPost);
 
         return PostDetailResponse.from(savedPost);
     }
 
     public Post createPost(final PostCreateRequest request, final User user) {
-        Category category = categoryRepository.findByName(request.getCategory())
+        Category category = categoryRepository.findById(request.getCategory())
                 .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
-        Part part = partRepository.findByName(request.getPart())
+        Part part = partRepository.findById(request.getPart())
                 .orElseThrow(() -> new IllegalArgumentException("해당 파트 없음"));
 
         return Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
                 .members(request.getMembers())
+                .part(part)
                 .category(category)
                 .writer(user)
-                .part(part)
                 .build();
     }
 
@@ -70,9 +74,9 @@ public class PostService {
     public PostDetailResponse modifyPost(Long id, PostCreateRequest request) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
-        Category category = categoryRepository.findByName(request.getCategory())
+        Category category = categoryRepository.findById(request.getCategory())
                 .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
-        Part part = partRepository.findByName(request.getPart())
+        Part part = partRepository.findById(request.getPart())
                 .orElseThrow(() -> new IllegalArgumentException("해당 파트 없음"));
 
         post.modifyPost(request.getTitle(), request.getContent(), request.getMembers(), category, part);
