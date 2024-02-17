@@ -13,6 +13,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Table(name = "post")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -42,8 +43,11 @@ public class Post extends BaseTimeEntity {
     @Column(nullable = true)
     private String members;
 
+    @Column(nullable = true)
+    private String mentor;
+
     @Builder
-    private Post (String title, String content, Long viewCnt, String members, User writer, Category category, Part part){
+    private Post (String title, String content, Long viewCnt, String members, User writer, Category category, Part part, String mentor){
         this.title = title;
         this.content = content;
         this.viewCnt = viewCnt;
@@ -51,6 +55,7 @@ public class Post extends BaseTimeEntity {
         this.writer = writer;
         this.category = category;
         this.part = part;
+        this.mentor = mentor;
     }
 
     // 연관관계 매핑 메소드

@@ -10,9 +10,7 @@ import org.example.yulion.domain.part.domain.Part;
 import org.example.yulion.domain.part.repository.PartRepository;
 import org.example.yulion.domain.post.domain.Post;
 import org.example.yulion.domain.post.dto.request.PostCreateRequest;
-import org.example.yulion.domain.post.dto.response.PostCommonListResponse;
-import org.example.yulion.domain.post.dto.response.PostCommonSummaryResponse;
-import org.example.yulion.domain.post.dto.response.PostDetailResponse;
+import org.example.yulion.domain.post.dto.response.*;
 import org.example.yulion.domain.post.repository.PostRepository;
 import org.example.yulion.domain.user.domain.User;
 import org.example.yulion.domain.user.repository.UserRepository;
@@ -94,8 +92,9 @@ public class PostService {
         return PostDetailResponse.from(post);
     }
 
-    public PostCommonListResponse getNoticeList(Pageable pageable){
-        Category category = categoryRepository.findById(1L)
+    @Transactional
+    public PostCommonListResponse getCommonList(Pageable pageable, Long categoryId){
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
         Page<Post> posts = postRepository.findAllByCategoryOrderByCreateAt(category, pageable);
 
@@ -106,15 +105,16 @@ public class PostService {
         return PostCommonListResponse.from(postResponses, posts.getNumber(), posts.getTotalPages());
     }
 
-    public PostCommonListResponse getCommunityList(Pageable pageable){
-        Category category = categoryRepository.findById(2L)
+    @Transactional
+    public PostEducationListResponse getEducationList(Pageable pageable, Long categoryId){
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
         Page<Post> posts = postRepository.findAllByCategoryOrderByCreateAt(category, pageable);
 
-        List<PostCommonSummaryResponse> postResponses = posts.getContent().stream()
-                .map(PostCommonSummaryResponse::from)
+        List<PostEducationSummaryResponse> postResponses = posts.getContent().stream()
+                .map(PostEducationSummaryResponse::from)
                 .collect(Collectors.toList());
 
-        return PostCommonListResponse.from(postResponses, posts.getNumber(), posts.getTotalPages());
+        return PostEducationListResponse.from(postResponses, posts.getNumber(), posts.getTotalPages());
     }
 }

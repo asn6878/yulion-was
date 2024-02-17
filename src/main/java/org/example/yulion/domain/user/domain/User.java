@@ -38,8 +38,8 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
-    private List<Post> posts = new ArrayList<>();
+//    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+//    private List<Post> posts = new ArrayList<>();
 
     @Builder
     protected User(String password, String phoneNumber, String nickname, String email, UserRole role, String gender, LocalDate birth) {

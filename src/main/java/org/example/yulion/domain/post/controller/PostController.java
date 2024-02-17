@@ -1,10 +1,12 @@
 package org.example.yulion.domain.post.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.example.yulion.domain.post.dto.request.PostCreateRequest;
 import org.example.yulion.domain.post.dto.response.PostCommonListResponse;
 import org.example.yulion.domain.post.dto.response.PostCommonSummaryResponse;
 import org.example.yulion.domain.post.dto.response.PostDetailResponse;
+import org.example.yulion.domain.post.dto.response.PostEducationListResponse;
 import org.example.yulion.domain.post.service.PostService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +25,8 @@ public class PostController {
      3. 게시글 수정
      4. 게시글 삭제
      5. 게시글 목록 조회
-         5-1. id + 파트 + 제목 + 작성자 + 작성일 + 조회수 (Notice, 커뮤니티)
-         5-2. id + 파트 + 제목 +  팀원 (스터디, 팀빌딩, Homework)
+         5-1. id + 파트 + 제목 + 작성자 + 작성일 + 조회수 (Notice, 커뮤니티) (Common)
+         5-2. id + 파트 + 제목 +  팀원 (스터디, 팀빌딩, Homework) (Education)
 
      6. 게시글 요약 목록 조회 (세가지)
          6-1. 제목 + 날짜 (Notice, 커뮤니티, Q&A, Homework))
@@ -65,7 +67,7 @@ public class PostController {
 
     // 4. 게시글 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePost(@PathVariable Long id) {
+    public ResponseEntity<PostDetailResponse> deletePost(@PathVariable Long id) {
         PostDetailResponse response = postService.deletePost(id);
 
         return ResponseEntity.ok(response);
@@ -73,25 +75,48 @@ public class PostController {
 
     // 5-1-1. 게시글 목록조회 (공지사항)
     @GetMapping("/notice") // page => 페이지 번호, criteria => 정렬 기준 (기본은 작성일자)
-    public ResponseEntity<?> getNoticeList(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                                                                   @RequestParam(required = false, defaultValue = "createAt", value = "criteria") String criteria,
-                                                                   @RequestParam(required = false, defaultValue = "10", value = "size") int size) {
-        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(criteria).descending());
-        PostCommonListResponse response = postService.getNoticeList(pageable);
+    public ResponseEntity<PostCommonListResponse> getNoticeList(Pageable pageable) {
+        Long cId = 1L;
+        PostCommonListResponse response = postService.getCommonList(pageable, cId);
 
         return ResponseEntity.ok(response);
     }
 
     // 5-1-2. 게시글 목록조회 (커뮤니티)
     @GetMapping("/community")
-    public ResponseEntity<?> getCommunityList(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
-                                                                   @RequestParam(required = false, defaultValue = "createAt", value = "criteria") String criteria,
-                                                                   @RequestParam(required = false, defaultValue = "10", value = "size") int size) {
-        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(criteria).descending());
-        PostCommonListResponse response = postService.getCommunityList(pageable);
+    public ResponseEntity<PostCommonListResponse> getCommunityList(Pageable pageable) {
+        Long cId = 2L;
+        PostCommonListResponse response = postService.getCommonList(pageable, cId);
 
         return ResponseEntity.ok(response);
     }
 
+    // 5-2-1. 게시글 목록조회 (스터디)
+    @GetMapping("/study")
+    public ResponseEntity<PostEducationListResponse> getStudyList(Pageable pageable) {
+        Long cId = 3L;
+        PostEducationListResponse response = postService.getEducationList(pageable, cId);
 
+        return ResponseEntity.ok(response);
+    }
+
+    // 5-2-2. 게시글 목록조회 (팀빌딩)
+    @GetMapping("/team")
+    public ResponseEntity<PostEducationListResponse> getTeamList(Pageable pageable) {
+        Long cId = 4L;
+        PostEducationListResponse response = postService.getEducationList(pageable, cId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 5-2-3. 게시글 목록조회 (과제)
+    @GetMapping("/homework")
+    public ResponseEntity<PostCommonListResponse> getHomeworkList(Pageable pageable) {
+        Long cId = 5L;
+        PostCommonListResponse response = postService.getCommonList(pageable, cId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    //
 }
