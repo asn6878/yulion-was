@@ -1,15 +1,9 @@
 package org.example.yulion.domain.auth.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.example.yulion.global.auth.AuthConstants;
 
 import java.time.LocalDate;
-
 
 public record SignupRequest(
 
@@ -29,8 +23,16 @@ public record SignupRequest(
         @Size(min = 6, message = "비밀번호의 길이는 최소 6자 입니다")
         String password,
 
+        @NotBlank(message = "성별은 공백이 아니어야 합니다")
         String gender,
 
-        LocalDate birth
+        LocalDate birth,
+
+        @NotBlank(message = "프로필 이미지 URL은 공백이 아니어야 합니다")
+        String profileImageUrl,
+
+        @NotNull(message = "학번은 null이 아니어야 합니다")
+        Long studentId,
+        String githubUsername
 ) {
 }

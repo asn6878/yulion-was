@@ -1,6 +1,11 @@
 package org.example.yulion.domain.auth.dto.response;
 
+import org.example.yulion.domain.user.domain.User;
+
 public record SignupResult(
-    // TODO 회원가입 완료시 프론트에서 필요한 값
+        long userId
 ) {
+    public static SignupResult of(User user) {
+        return new SignupResult(user.getId());
+    }
 }
