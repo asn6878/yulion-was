@@ -29,7 +29,6 @@ public class AuthSignupService {
                 .phoneNumber(signupRequest.phoneNumber())
                 .gender(signupRequest.gender())
                 .birth(signupRequest.birth())
-                .profileImageUrl(signupRequest.profileImageUrl())
                 .studentId(signupRequest.studentId())
                 .githubUsername(signupRequest.githubUsername())
                 .build();

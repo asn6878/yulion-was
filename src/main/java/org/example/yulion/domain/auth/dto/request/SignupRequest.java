@@ -28,9 +28,6 @@ public record SignupRequest(
 
         LocalDate birth,
 
-        @NotBlank(message = "프로필 이미지 URL은 공백이 아니어야 합니다")
-        String profileImageUrl,
-
         @NotNull(message = "학번은 null이 아니어야 합니다")
         Long studentId,
         String githubUsername

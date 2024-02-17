@@ -45,7 +45,6 @@ public class User extends BaseTimeEntity {
     @Column(unique = true)
     private String githubUsername;
 
-    @Column(nullable = false)
     private String profileImageUrl;
 
     private LocalDateTime deletedAt;
