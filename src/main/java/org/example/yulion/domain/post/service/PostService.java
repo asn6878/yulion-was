@@ -39,10 +39,7 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못된 유저"));
 
         Post post = createPost(request, user);
-        // log.info(post.getId().toString());
         Post savedPost = postRepository.save(post);
-
-        log.info("savedPost : {}", savedPost);
 
         return PostDetailResponse.from(savedPost);
     }
