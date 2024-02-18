@@ -1,5 +1,6 @@
 package org.example.yulion.domain.post.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @NoArgsConstructor
 @Getter
+@Schema(description = "게시글 생성 요청")
 public class PostCreateRequest {
     @NotBlank
     private String title;

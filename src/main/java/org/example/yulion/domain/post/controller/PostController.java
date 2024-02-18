@@ -1,6 +1,7 @@
 package org.example.yulion.domain.post.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.example.yulion.domain.post.dto.request.PostCreateRequest;
 import org.example.yulion.domain.post.dto.response.PostCommonListResponse;
@@ -8,15 +9,18 @@ import org.example.yulion.domain.post.dto.response.PostCommonSummaryResponse;
 import org.example.yulion.domain.post.dto.response.PostDetailResponse;
 import org.example.yulion.domain.post.dto.response.PostEducationListResponse;
 import org.example.yulion.domain.post.service.PostService;
+import org.example.yulion.global.auth.userdetails.CustomUserDetails;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequestMapping("/api/v1/posts")
 @RestController
+@Tag(name = "Post", description = "게시글 관련 API")
 public class PostController {
 /*
      필요한 API
@@ -42,14 +46,17 @@ public class PostController {
     }
 
     // 1. 게시글 생성
+    @Operation(summary = "게시글 생성", description = "category ID는 다음과 같습니다. 1: 공지사항, 2: 커뮤니티, 3: 스터디, 4: 팀빌딩, 5: 과제<br>part ID는 다음과 같습니다. 1:BE, 2:FE, 3:UI/UX, 4:ALL")
     @PostMapping("")
-    public ResponseEntity<PostDetailResponse> createPost(@RequestBody PostCreateRequest request) {
-        PostDetailResponse response = postService.addPost(request);
+    public ResponseEntity<PostDetailResponse> createPost(@RequestBody PostCreateRequest request,
+                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+        PostDetailResponse response = postService.addPost(request, userDetails.getId());
 
         return ResponseEntity.ok(response);
     }
 
     // 2. 게시글 조회 (상세 조회)
+    @Operation(summary = "게시글 조회 (상세 조회)")
     @GetMapping("/{id}")
     public ResponseEntity<PostDetailResponse> getPost(@PathVariable Long id) {
         PostDetailResponse response = postService.getPost(id);
@@ -58,22 +65,28 @@ public class PostController {
     }
 
     // 3. 게시글 수정
+    @Operation(summary = "게시글 수정")
     @PutMapping("/{id}")
-    public ResponseEntity<PostDetailResponse> modifyPost(@PathVariable Long id, @RequestBody PostCreateRequest request) {
-        PostDetailResponse response = postService.modifyPost(id, request);
+    public ResponseEntity<PostDetailResponse> modifyPost(@PathVariable Long id,
+                                                         @RequestBody PostCreateRequest request,
+                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+        PostDetailResponse response = postService.modifyPost(id, request, userDetails.getId());
 
         return ResponseEntity.ok(response);
     }
 
     // 4. 게시글 삭제
+    @Operation(summary = "게시글 삭제")
     @DeleteMapping("/{id}")
-    public ResponseEntity<PostDetailResponse> deletePost(@PathVariable Long id) {
-        PostDetailResponse response = postService.deletePost(id);
+    public ResponseEntity<PostDetailResponse> deletePost(@PathVariable Long id,
+                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
+        PostDetailResponse response = postService.deletePost(id, userDetails.getId());
 
         return ResponseEntity.ok(response);
     }
 
     // 5-1-1. 게시글 목록조회 (공지사항)
+    @Operation(summary = "게시글 목록 조회 (공지사항)")
     @GetMapping("/notice") // page => 페이지 번호, criteria => 정렬 기준 (기본은 작성일자)
     public ResponseEntity<PostCommonListResponse> getNoticeList(Pageable pageable) {
         Long cId = 1L;
@@ -83,6 +96,7 @@ public class PostController {
     }
 
     // 5-1-2. 게시글 목록조회 (커뮤니티)
+    @Operation(summary = "게시글 목록 조회 (커뮤니티)")
     @GetMapping("/community")
     public ResponseEntity<PostCommonListResponse> getCommunityList(Pageable pageable) {
         Long cId = 2L;
@@ -92,6 +106,7 @@ public class PostController {
     }
 
     // 5-2-1. 게시글 목록조회 (스터디)
+    @Operation(summary = "게시글 목록 조회 (스터디)")
     @GetMapping("/study")
     public ResponseEntity<PostEducationListResponse> getStudyList(Pageable pageable) {
         Long cId = 3L;
@@ -101,6 +116,7 @@ public class PostController {
     }
 
     // 5-2-2. 게시글 목록조회 (팀빌딩)
+    @Operation(summary = "게시글 목록 조회 (팀빌딩)")
     @GetMapping("/team")
     public ResponseEntity<PostEducationListResponse> getTeamList(Pageable pageable) {
         Long cId = 4L;
@@ -110,6 +126,7 @@ public class PostController {
     }
 
     // 5-2-3. 게시글 목록조회 (과제)
+    @Operation(summary = "게시글 목록 조회 (과제)")
     @GetMapping("/homework")
     public ResponseEntity<PostCommonListResponse> getHomeworkList(Pageable pageable) {
         Long cId = 5L;

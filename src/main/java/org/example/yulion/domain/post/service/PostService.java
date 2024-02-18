@@ -33,10 +33,10 @@ public class PostService {
     private final PartRepository partRepository;
 
     // 1. Controller => createPost 메서드에 매핑되는 Service 로직
-    public PostDetailResponse addPost(PostCreateRequest request) {
+    public PostDetailResponse addPost(PostCreateRequest request, Long userId) {
         // 인증 구현전 테스팅용 유저 정보 가져오기
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저 없음"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 유저"));
 
         Post post = createPost(request, user);
         // log.info(post.getId().toString());
@@ -70,7 +70,7 @@ public class PostService {
         return PostDetailResponse.from(post);
     }
 
-    public PostDetailResponse modifyPost(Long id, PostCreateRequest request) {
+    public PostDetailResponse modifyPost(Long id, PostCreateRequest request, Long userId) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
         Category category = categoryRepository.findById(request.getCategory())
@@ -78,16 +78,24 @@ public class PostService {
         Part part = partRepository.findById(request.getPart())
                 .orElseThrow(() -> new IllegalArgumentException("해당 파트 없음"));
 
+        if (!post.getWriter().getId().equals(userId)) {
+            throw new IllegalArgumentException("작성자만 수정 가능합니다.");
+        }
+
         post.modifyPost(request.getTitle(), request.getContent(), request.getMembers(), category, part);
         final Post savedPost = postRepository.save(post);
 
         return PostDetailResponse.from(savedPost);
     }
 
-    public PostDetailResponse deletePost(Long id) {
+    public PostDetailResponse deletePost(Long id, Long userId) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
         postRepository.delete(post);
+
+        if (!post.getWriter().getId().equals(userId)) {
+            throw new IllegalArgumentException("작성자만 수정 가능합니다.");
+        }
 
         return PostDetailResponse.from(post);
     }
