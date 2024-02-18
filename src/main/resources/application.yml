@@ -27,3 +27,4 @@ app:
     refresh:
       expiration: ${JWT_EXPIRATION_REFRESH}
   allow-origins: http://localhost:3000
+  backend-api: ${BACKEND_API}
