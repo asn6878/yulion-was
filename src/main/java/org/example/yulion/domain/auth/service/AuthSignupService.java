@@ -29,12 +29,14 @@ public class AuthSignupService {
                 .phoneNumber(signupRequest.phoneNumber())
                 .gender(signupRequest.gender())
                 .birth(signupRequest.birth())
+                .studentId(signupRequest.studentId())
+                .githubUsername(signupRequest.githubUsername())
                 .build();
         userRepository.save(user);
 
         log.info("회원가입 완료: ID: {}, 이메일: {}, 닉네임: {}", user.getId(), user.getEmail(), user.getNickname());
 
-        return new SignupResult();
+        return SignupResult.of(user);
     }
 
 
