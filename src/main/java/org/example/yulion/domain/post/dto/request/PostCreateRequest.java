@@ -16,11 +16,11 @@ public class PostCreateRequest {
 
     private String content;
     private String members;
-    private Long category;
-    private Long part;
+    private String category;
+    private String part;
 
     @Builder
-    public PostCreateRequest(String title, String content, String members, Long category, Long part) {
+    public PostCreateRequest(String title, String content, String members, String category, String part) {
         this.title = title;
         this.content = content;
         this.members = members;

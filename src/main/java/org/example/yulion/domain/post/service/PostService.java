@@ -4,16 +4,16 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.yulion.domain.category.domain.Category;
-import org.example.yulion.domain.category.repository.CategoryRepository;
-import org.example.yulion.domain.part.domain.Part;
-import org.example.yulion.domain.part.repository.PartRepository;
+
+import org.example.yulion.domain.post.domain.Category;
+import org.example.yulion.domain.post.domain.Part;
 import org.example.yulion.domain.post.domain.Post;
 import org.example.yulion.domain.post.dto.request.PostCreateRequest;
 import org.example.yulion.domain.post.dto.response.*;
 import org.example.yulion.domain.post.repository.PostRepository;
 import org.example.yulion.domain.user.domain.User;
 import org.example.yulion.domain.user.repository.UserRepository;
+import org.hibernate.annotations.Check;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,8 +29,7 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final CategoryRepository categoryRepository;
-    private final PartRepository partRepository;
+
 
     // 1. Controller => createPost 메서드에 매핑되는 Service 로직
     public PostDetailResponse addPost(PostCreateRequest request, Long userId) {
@@ -45,10 +44,8 @@ public class PostService {
     }
 
     public Post createPost(final PostCreateRequest request, final User user) {
-        Category category = categoryRepository.findById(request.getCategory())
-                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
-        Part part = partRepository.findById(request.getPart())
-                .orElseThrow(() -> new IllegalArgumentException("해당 파트 없음"));
+        Category category = Category.valueOf(request.getCategory());
+        Part part = Part.valueOf(request.getPart());
 
         return Post.builder()
                 .title(request.getTitle())
@@ -68,16 +65,10 @@ public class PostService {
     }
 
     public PostDetailResponse modifyPost(Long id, PostCreateRequest request, Long userId) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
-        Category category = categoryRepository.findById(request.getCategory())
-                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
-        Part part = partRepository.findById(request.getPart())
-                .orElseThrow(() -> new IllegalArgumentException("해당 파트 없음"));
+        Category category = Category.valueOf(request.getCategory());
+        Part part = Part.valueOf(request.getPart());
 
-        if (!post.getWriter().getId().equals(userId)) {
-            throw new IllegalArgumentException("작성자만 수정 가능합니다.");
-        }
+        Post post = CheckPostOwner(id, userId);
 
         post.modifyPost(request.getTitle(), request.getContent(), request.getMembers(), category, part);
         final Post savedPost = postRepository.save(post);
@@ -86,21 +77,14 @@ public class PostService {
     }
 
     public PostDetailResponse deletePost(Long id, Long userId) {
-        Post post = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
+        Post post = CheckPostOwner(id, userId);
         postRepository.delete(post);
-
-        if (!post.getWriter().getId().equals(userId)) {
-            throw new IllegalArgumentException("작성자만 수정 가능합니다.");
-        }
 
         return PostDetailResponse.from(post);
     }
 
     @Transactional
-    public PostCommonListResponse getCommonList(Pageable pageable, Long categoryId){
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
+    public PostCommonListResponse getCommonList(Pageable pageable, Category category){
         Page<Post> posts = postRepository.findAllByCategoryOrderByCreateAt(category, pageable);
 
         List<PostCommonSummaryResponse> postResponses = posts.getContent().stream()
@@ -111,9 +95,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostEducationListResponse getEducationList(Pageable pageable, Long categoryId){
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 카테고리 없음"));
+    public PostEducationListResponse getEducationList(Pageable pageable, Category category){
         Page<Post> posts = postRepository.findAllByCategoryOrderByCreateAt(category, pageable);
 
         List<PostEducationSummaryResponse> postResponses = posts.getContent().stream()
@@ -121,5 +103,14 @@ public class PostService {
                 .collect(Collectors.toList());
 
         return PostEducationListResponse.from(postResponses, posts.getNumber(), posts.getTotalPages());
+    }
+
+    public Post CheckPostOwner(Long postId, Long userId){
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
+        if (!post.getWriter().getId().equals(userId)) {
+            throw new IllegalArgumentException("작성자만 수정 가능합니다.");
+        }
+        return post;
     }
 }

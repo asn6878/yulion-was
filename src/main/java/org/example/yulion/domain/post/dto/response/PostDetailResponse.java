@@ -1,12 +1,14 @@
 package org.example.yulion.domain.post.dto.response;
 
 import org.example.yulion.domain.post.domain.Post;
+import org.example.yulion.domain.post.domain.Part;
+import org.example.yulion.domain.post.domain.Category;
 
 public record PostDetailResponse (
         Long id,
         Long userId,
-        String part,
-        String category,
+        Part part,
+        Category category,
         String title,
         String content,
         String members) {
@@ -14,12 +16,11 @@ public record PostDetailResponse (
         return new PostDetailResponse(
                 post.getId(),
                 post.getWriter().getId(),
-                post.getPart().getName(),
-                post.getCategory().getName(),
+                post.getPart(),
+                post.getCategory(),
                 post.getTitle(),
                 post.getContent(),
                 post.getMembers()
         );
-
     }
 }
