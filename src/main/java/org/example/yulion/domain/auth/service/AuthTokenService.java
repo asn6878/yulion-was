@@ -40,6 +40,8 @@ public class AuthTokenService {
 
         final String userId = userDetails.getId().toString();
 
+        log.info("로그인 성공. Member ID : {}", userId);
+
         return tokenFacade.generate(userId);
     }
 
