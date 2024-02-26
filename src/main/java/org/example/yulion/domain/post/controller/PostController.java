@@ -3,7 +3,6 @@ package org.example.yulion.domain.post.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.example.yulion.domain.post.domain.Category;
 import org.example.yulion.domain.post.dto.request.PostCreateRequest;
 import org.example.yulion.domain.post.dto.response.PostCommonListResponse;
 import org.example.yulion.domain.post.dto.response.PostCommonSummaryResponse;
@@ -47,7 +46,7 @@ public class PostController {
     }
 
     // 1. 게시글 생성
-    @Operation(summary = "게시글 생성", description = "category필드에 들어갈 값은 다음과 같습니다. NOTICE : 공지사항, COMMUNITY : 커뮤니티, STUDY: 스터디, TEAM_BUILDING: 팀빌딩, HOMEWORK: 과제<br>part ID는 다음과 같습니다. BE:백엔드, FE:프론트엔드, UIUX:기획/디자인, ALL:공통")
+    @Operation(summary = "게시글 생성", description = "category ID는 다음과 같습니다. 1: 공지사항, 2: 커뮤니티, 3: 스터디, 4: 팀빌딩, 5: 과제<br>part ID는 다음과 같습니다. 1:BE, 2:FE, 3:UI/UX, 4:ALL")
     @PostMapping("")
     public ResponseEntity<PostDetailResponse> createPost(@RequestBody PostCreateRequest request,
                                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -90,8 +89,8 @@ public class PostController {
     @Operation(summary = "게시글 목록 조회 (공지사항)")
     @GetMapping("/notice") // page => 페이지 번호, criteria => 정렬 기준 (기본은 작성일자)
     public ResponseEntity<PostCommonListResponse> getNoticeList(Pageable pageable) {
-        Category category = Category.NOTICE;
-        PostCommonListResponse response = postService.getCommonList(pageable, category);
+        Long cId = 1L;
+        PostCommonListResponse response = postService.getCommonList(pageable, cId);
 
         return ResponseEntity.ok(response);
     }
@@ -100,8 +99,8 @@ public class PostController {
     @Operation(summary = "게시글 목록 조회 (커뮤니티)")
     @GetMapping("/community")
     public ResponseEntity<PostCommonListResponse> getCommunityList(Pageable pageable) {
-        Category category = Category.COMMUNITY;
-        PostCommonListResponse response = postService.getCommonList(pageable, category);
+        Long cId = 2L;
+        PostCommonListResponse response = postService.getCommonList(pageable, cId);
 
         return ResponseEntity.ok(response);
     }
@@ -110,8 +109,8 @@ public class PostController {
     @Operation(summary = "게시글 목록 조회 (스터디)")
     @GetMapping("/study")
     public ResponseEntity<PostEducationListResponse> getStudyList(Pageable pageable) {
-        Category category = Category.STUDY;
-        PostEducationListResponse response = postService.getEducationList(pageable, category);
+        Long cId = 3L;
+        PostEducationListResponse response = postService.getEducationList(pageable, cId);
 
         return ResponseEntity.ok(response);
     }
@@ -120,8 +119,8 @@ public class PostController {
     @Operation(summary = "게시글 목록 조회 (팀빌딩)")
     @GetMapping("/team")
     public ResponseEntity<PostEducationListResponse> getTeamList(Pageable pageable) {
-        Category category = Category.TEAM_BUILDING;
-        PostEducationListResponse response = postService.getEducationList(pageable, category);
+        Long cId = 4L;
+        PostEducationListResponse response = postService.getEducationList(pageable, cId);
 
         return ResponseEntity.ok(response);
     }
@@ -130,8 +129,8 @@ public class PostController {
     @Operation(summary = "게시글 목록 조회 (과제)")
     @GetMapping("/homework")
     public ResponseEntity<PostCommonListResponse> getHomeworkList(Pageable pageable) {
-        Category category = Category.HOMEWORK;
-        PostCommonListResponse response = postService.getCommonList(pageable, category);
+        Long cId = 5L;
+        PostCommonListResponse response = postService.getCommonList(pageable, cId);
 
         return ResponseEntity.ok(response);
     }

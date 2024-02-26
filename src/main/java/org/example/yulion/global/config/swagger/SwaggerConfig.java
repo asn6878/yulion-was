@@ -24,7 +24,7 @@ import static org.springframework.security.config.Elements.JWT;
 
 @OpenAPIDefinition(
         servers = {
-                @Server(url = "http://223.130.131.203:8080", description = "Production Server"),
+                @Server(url = "${app.backend-api}", description = "Production Server"),
                 @Server(url = "http://localhost:8080", description = "Local Server"),
         },
         tags = {
