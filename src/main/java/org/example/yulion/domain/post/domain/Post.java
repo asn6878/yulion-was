@@ -3,9 +3,9 @@ package org.example.yulion.domain.post.domain;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.yulion.domain.category.domain.Category;
+import org.example.yulion.domain.post.domain.Category;
+import org.example.yulion.domain.post.domain.Part;
 import org.example.yulion.domain.common.BaseTimeEntity;
-import org.example.yulion.domain.part.domain.Part;
 import org.example.yulion.domain.user.domain.User;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -26,12 +26,10 @@ public class Post extends BaseTimeEntity {
     @JoinColumn (name = "user_id")
     private User writer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn (name = "category_id")
+    @Enumerated(EnumType.STRING)
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn (name = "part_id")
+    @Enumerated(EnumType.STRING)
     private Part part;
 
     @Column(nullable = false)

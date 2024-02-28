@@ -1,6 +1,6 @@
 package org.example.yulion.domain.post.repository;
 
-import org.example.yulion.domain.category.domain.Category;
+import org.example.yulion.domain.post.domain.Category;
 import org.example.yulion.domain.post.domain.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
