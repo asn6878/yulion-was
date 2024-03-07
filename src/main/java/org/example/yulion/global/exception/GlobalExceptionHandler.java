@@ -15,20 +15,29 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * 커스텀되는 예외사항들을 처리하는 ExceptionHandler
+ */
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+
+    /**
+     * 각 도메인 패키지별로 선언한 Exception들을 처리해주는 메소드
+     * baseException을 받아와 처리한다.
+     */
     @ExceptionHandler(BaseException.class)
     public ApiResponse<ApiExceptionResponse> handleBaseException(final BaseException ex){
         final BaseExceptionType baseExceptionType = ex.exceptionType();
         final ApiExceptionResponse apiErrorResponse = new ApiExceptionResponse(
                 baseExceptionType.errorCode(), baseExceptionType.errorMessage()
         );
-
         log.info("error = {}", apiErrorResponse);
 
         return ApiResponse.createError(apiErrorResponse);
 
-    }
 
+
+    }
 }
