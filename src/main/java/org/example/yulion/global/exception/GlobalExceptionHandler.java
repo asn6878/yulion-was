@@ -30,14 +30,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public ApiResponse<ApiExceptionResponse> handleBaseException(final BaseException ex){
         final BaseExceptionType baseExceptionType = ex.exceptionType();
-        final ApiExceptionResponse apiErrorResponse = new ApiExceptionResponse(
+        final ApiExceptionResponse apiExceptionResponse = new ApiExceptionResponse(
                 baseExceptionType.errorCode(), baseExceptionType.errorMessage()
         );
-        log.info("error = {}", apiErrorResponse);
+        log.info("error = {}", apiExceptionResponse);
 
-        return ApiResponse.createError(apiErrorResponse);
-
-
-
+        return ApiResponse.createError(apiExceptionResponse);
     }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ApiResponse<ApiExceptionResponse> handleBadCredentialsException(final BadCredentialsException ex){
+        final ApiExceptionResponse apiExceptionResponse = new ApiExceptionResponse(
+                401,
+                ex.toString()
+        );
+
+        return ApiResponse.createError(apiExceptionResponse);
+    }
+
 }
