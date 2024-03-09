@@ -3,6 +3,8 @@ package org.example.yulion.global.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.example.yulion.global.config.response.ApiResponse;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -38,14 +40,43 @@ public class GlobalExceptionHandler {
         return ApiResponse.createError(apiExceptionResponse);
     }
 
+    // apiExceptionResponse 생성해주는 메소드 만들어도될듯?
     @ExceptionHandler(BadCredentialsException.class)
     public ApiResponse<ApiExceptionResponse> handleBadCredentialsException(final BadCredentialsException ex){
+        final CommonExceptionType commonExceptionType = CommonExceptionType.INVALID_CREDENTIALS;
+
+        return createResponse(commonExceptionType);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ApiResponse<ApiExceptionResponse> handleDataIntegrityViolationException(final DataIntegrityViolationException ex){
+        if (ex.getCause() instanceof DuplicateKeyException){
+            CommonExceptionType commonExceptionType = CommonExceptionType.DUPLICATED_FIELD;
+            commonExceptionType.setErrorMessage(ex.getLocalizedMessage());
+            return createResponse(commonExceptionType);
+        } else {
+            return handleException(ex);
+        }
+
+    }
+
+    @ExceptionHandler(Exception.class)
+    protected ApiResponse<ApiExceptionResponse> handleException(Exception ex) {
+        log.error("GlobalExceptionHandler에 정의되지 않은 에러: " + ex.toString());
+
         final ApiExceptionResponse apiExceptionResponse = new ApiExceptionResponse(
-                401,
+                500,
                 ex.toString()
+        );
+        return ApiResponse.createError(apiExceptionResponse);
+    }
+
+    public ApiResponse<ApiExceptionResponse> createResponse(BaseExceptionType ex){
+        final ApiExceptionResponse apiExceptionResponse = new ApiExceptionResponse(
+                ex.errorCode(),
+                ex.errorMessage()
         );
 
         return ApiResponse.createError(apiExceptionResponse);
     }
-
 }

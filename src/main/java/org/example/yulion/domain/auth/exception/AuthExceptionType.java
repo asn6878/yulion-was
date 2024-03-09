@@ -28,7 +28,7 @@ public enum AuthExceptionType implements BaseExceptionType {
 
     private final int errorCode;
     private final HttpStatus httpStatus;
-    private final String errorMessage;
+    private String errorMessage;
 
     AuthExceptionType(final int errorCode,
                       final HttpStatus httpStatus,
@@ -51,5 +51,10 @@ public enum AuthExceptionType implements BaseExceptionType {
     @Override
     public String errorMessage() {
         return errorMessage;
+    }
+
+    @Override
+    public void setErrorMessage(String message) {
+        this.errorMessage += message;
     }
 }
