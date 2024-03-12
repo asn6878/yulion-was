@@ -42,14 +42,15 @@ public class Comment extends BaseTimeEntity {
 
     private LocalDateTime deletedAt;
     @Builder
-    private Comment (User writer, Post post, Comment parentComment, String content){
+    private Comment(User writer, Post post, Comment parentComment, String content, CommentStatus status){
         this.writer = writer;
         this.post = post;
         this.parentComment = parentComment;
         this.content = content;
+        this.status = status;
     }
 
-    public void modifyContent(String content){
+    public void modifyContent(String content) {
         this.content = content;
     }
 
