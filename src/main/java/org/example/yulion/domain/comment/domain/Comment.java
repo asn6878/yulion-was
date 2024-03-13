@@ -12,6 +12,8 @@ import org.example.yulion.domain.post.domain.Post;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "comment")
@@ -33,14 +35,20 @@ public class Comment extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "parent_id")
-    private Comment parentComment;
+    @Builder.Default
+    private Comment parentComment = null;
 
     private String content;
 
-    @ColumnDefault("'ACTIVE'")
-    private CommentStatus status;
+    @Builder.Default
+    @OneToMany(mappedBy = "parentComment")
+    private List<Comment> childComments = new ArrayList<Comment>();
+
+    @Builder.Default
+    private CommentStatus status = CommentStatus.ACTIVE;
 
     private LocalDateTime deletedAt;
+
     @Builder
     private Comment(User writer, Post post, Comment parentComment, String content, CommentStatus status){
         this.writer = writer;

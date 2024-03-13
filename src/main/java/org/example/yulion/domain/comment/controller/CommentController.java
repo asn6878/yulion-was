@@ -64,4 +64,15 @@ public class CommentController {
         return ApiResponse.createSuccess(response);
     }
 
+    @Operation(summary = "대댓글 작성")
+    @PostMapping("/{id}/reply")
+    public ApiResponse<CommentResponse> createReply(@RequestBody CommentRequest request,
+                                                    @PathVariable Long commentId,
+                                                    @AuthenticationPrincipal CustomUserDetails customUserDetails
+    ) {
+        CommentResponse response = commentService.addReply(request, commentId, customUserDetails);
+
+        return ApiResponse.createSuccess(response);
+    }
+
 }

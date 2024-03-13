@@ -16,7 +16,11 @@ public enum CommentExceptionType implements BaseExceptionType {
 
     UNAUTHORIZED_COMMENT(401,
             HttpStatus.UNAUTHORIZED,
-            "댓글 작성자만 수정, 삭제가 가능합니다.");
+            "댓글 작성자만 수정, 삭제가 가능합니다."),
+
+    INVALID_REPLY(400,
+            HttpStatus.BAD_REQUEST,
+            "댓글의 답글은 2 depth까지만 가능합니다.");
 
     private final int errorCode;
     private final HttpStatus httpStatus;

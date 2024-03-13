@@ -32,9 +32,11 @@ public class CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
-    public CommentResponse addComment(CommentRequest request, Long postId, CustomUserDetails customUserDetails){
-        // 로그인된 유저 불러오기
-        Comment comment = createComment(request, postId ,customUserDetails);
+    public CommentResponse addComment(CommentRequest request,
+                                      Long postId,
+                                      CustomUserDetails customUserDetails){
+        User user = getUser(customUserDetails);
+        Comment comment = createComment(request, postId, user);
         Comment savedComment = commentRepository.save(comment);
 
         return CommentResponse.from(savedComment);
@@ -64,11 +66,29 @@ public class CommentService {
         return CommentResponse.from(savedComment);
     }
 
-    public void deleteComment (Long commentId, CustomUserDetails customUserDetails){
+    public CommentResponse deleteComment (Long commentId,
+                                          CustomUserDetails customUserDetails
+    ){
         User user = getUser(customUserDetails);
         Comment comment = CheckCommentOwner(commentId, user);
         comment.deleteComment();
+
+        final Comment savedComment = commentRepository.save(comment);
+
+        return CommentResponse.from(savedComment);
     }
+
+public CommentResponse addReply(CommentRequest request,
+                                Long commentId,
+                                CustomUserDetails customUserDetails
+){
+        User user = getUser(customUserDetails);
+        Comment reply = createReply(request, commentId, user);
+
+        Comment savedComment = commentRepository.save(reply);
+
+        return CommentResponse.from(savedComment);
+}
 
     public User getUser(CustomUserDetails customUserDetails){
         User user = userRepository.findById(customUserDetails.getId())
@@ -77,9 +97,7 @@ public class CommentService {
         return user;
     }
 
-    public Comment createComment(CommentRequest request, Long postId, CustomUserDetails customUserDetails) {
-        User user = userRepository.findById(customUserDetails.getId())
-                .orElseThrow(() -> new CommentException(CommentExceptionType.WRITER_NOT_FOUND));
+    public Comment createComment(CommentRequest request, Long postId, User user) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CommentException(CommentExceptionType.COMMENT_NOT_FOUND));
 
@@ -103,5 +121,26 @@ public class CommentService {
 
         return comment;
     }
+
+    public Comment createReply(CommentRequest request, Long commentId, User user){
+        Comment parentComment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(CommentExceptionType.COMMENT_NOT_FOUND));
+        // 대댓글을 작성하려고 하는 댓글이 대댓글 일때. 즉, 2 depth 이상일 때.
+        if (parentComment.getParentComment() != null){
+            throw new CommentException(CommentExceptionType.INVALID_REPLY);
+        }
+        Post post = parentComment.getPost();
+
+        Comment comment = Comment.builder()
+                .writer(user)
+                .post(post)
+                .parentComment(parentComment)
+                .content(request.content())
+                .status(CommentStatus.ACTIVE)
+                .build();
+
+        return comment;
+    }
+
 
 }
