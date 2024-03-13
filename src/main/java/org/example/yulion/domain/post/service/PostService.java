@@ -109,9 +109,9 @@ public class PostService {
 
     public Post CheckPostOwner(Long postId, Long userId){
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시글 없음"));
+                .orElseThrow(() -> new PostException(PostExceptionType.POST_NOT_FOUND));
         if (!post.getWriter().getId().equals(userId)) {
-            throw new IllegalArgumentException("작성자만 수정 가능합니다.");
+            throw new PostException(PostExceptionType.UNAUTHORIZED_POST);
         }
         return post;
     }

@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.yulion.domain.comment.domain.Comment;
 import org.example.yulion.domain.comment.domain.CommentStatus;
 import org.example.yulion.domain.comment.dto.response.CommentListResponse;
+import org.example.yulion.domain.comment.exception.CommentException;
+import org.example.yulion.domain.comment.exception.CommentExceptionType;
 import org.example.yulion.domain.comment.repository.CommentRepository;
 import org.example.yulion.domain.post.domain.Post;
 import org.example.yulion.domain.post.repository.PostRepository;
@@ -70,16 +72,16 @@ public class CommentService {
 
     public User getUser(CustomUserDetails customUserDetails){
         User user = userRepository.findById(customUserDetails.getId())
-                .orElseThrow(() ->new IllegalArgumentException("유저 임시 예외"));
+                .orElseThrow(() -> new CommentException(CommentExceptionType.WRITER_NOT_FOUND));
 
         return user;
     }
 
     public Comment createComment(CommentRequest request, Long postId, CustomUserDetails customUserDetails) {
         User user = userRepository.findById(customUserDetails.getId())
-                .orElseThrow(() -> new IllegalArgumentException("유저 임시 예외"));
+                .orElseThrow(() -> new CommentException(CommentExceptionType.WRITER_NOT_FOUND));
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글 임시 예외"));
+                .orElseThrow(() -> new CommentException(CommentExceptionType.COMMENT_NOT_FOUND));
 
         Comment comment = Comment.builder()
                 .writer(user)
@@ -94,9 +96,9 @@ public class CommentService {
 
     public Comment CheckCommentOwner(Long commentId, User user){
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("댓글 임시 예외"));
+                .orElseThrow(() -> new CommentException(CommentExceptionType.COMMENT_NOT_FOUND));
         if (!comment.getWriter().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("작성자 인가 임시 예외");
+            throw new CommentException(CommentExceptionType.UNAUTHORIZED_COMMENT);
         }
 
         return comment;
