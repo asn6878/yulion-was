@@ -54,7 +54,7 @@ public class CommentController {
     }
 
     @Operation(summary = "댓글 수정")
-    @GetMapping("/{id}")
+    @GetMapping("/modify/{id}")
     public ApiResponse<CommentResponse> modifyComment(@RequestBody CommentRequest request,
                                                       @PathVariable Long commentId,
                                                       @AuthenticationPrincipal CustomUserDetails customUserDetails

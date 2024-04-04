@@ -35,16 +35,13 @@ public class Comment extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn (name = "parent_id")
-    @Builder.Default
     private Comment parentComment = null;
 
     private String content;
 
-    @Builder.Default
     @OneToMany(mappedBy = "parentComment")
     private List<Comment> childComments = new ArrayList<Comment>();
 
-    @Builder.Default
     private CommentStatus status = CommentStatus.ACTIVE;
 
     private LocalDateTime deletedAt;
